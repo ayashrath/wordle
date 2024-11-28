@@ -2,7 +2,7 @@
 
 The aim is to make an algorithm that solves wordle in a pretty optimal way, it need not be the most optimal way. This will be run and tested on my own implementation of wordle.
 
-The wordle implementation will use the standard rules - 6 attempts, 5 letter words. The main thing which can make it slightly annoying is the word list that needs to be used. I looked into it, with [Matt Parker's Video](https://www.youtube.com/watch?v=_-AfhLQfb6w) being my starting point where he talked about how the original wordle has a finite list of word list. It was organised in two forms
+The wordle implementation will use the standard rules - 6 attempts, 5 letter words. The main thing which can make it slightly annoying is the word list that needs to be used. I looked into it, with [Matt Parker's Video](https://www.youtube.com/watch?v=_-AfhLQfb6w) being my starting point where he talked about how the original wordle has a finite list of word list. It was organised in two forms (they are mutually exclusive)
 - guess word list: Answers will not belong here but can be used for guesses
 - answer word list: Answers will be from here and can also be used for guesses
 

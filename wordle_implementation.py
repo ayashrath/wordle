@@ -12,7 +12,8 @@ class Wordle:
     It is the Wordle Game - Standard Rules
 
     Parameters:
-        - path ("./valid-wordle-words.txt"): The path where the word list is at from which the word is choosen
+        - path_ans ("./valid-wordle-words.txt"): The path where the word list is at from which the word is choosen
+        - path_guess ("./"): The path which contains the other guess words
         - seed (time.time()): If you want to use a seed, i.e., fix the choosen word using a fixed seed.
 
     Useage:
@@ -20,15 +21,21 @@ class Wordle:
         - Use the "play_machine" method to run it by calls turn by turn from a program
     """
 
-    def __init__(self, path: str = "./valid-wordle-words.txt", seed: int = time.time()):
+    def __init__(
+        self, path_ans: str = "nyt-wordle-answers-alphabetical.txt", path_guess="nyt-wordle-allowed-guesses.txt",
+        seed: int = time.time()
+    ):
         """
         Init
         """
-        with open(path) as fh:
+        with open(path_ans) as fh:
             random.seed = seed
             self.word_list = [line.strip() for line in fh.readlines()]
             self.choosen_word = random.choice(self.word_list)
             self.attempts = (None, None, None, None, None, None)  # as a game allows 6 attempts
+
+        with open(path_guess) as fh:  # as it is just used to check the consistency of inputs, can just append to ans
+            self.word_list += [line.strip() for line in fh.readlines()]
 
     def __get_choosen_word(self) -> str:
         """
