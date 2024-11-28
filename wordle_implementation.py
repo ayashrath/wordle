@@ -15,6 +15,7 @@ class Wordle:
         - path_ans ("./valid-wordle-words.txt"): The path where the word list is at from which the word is choosen
         - path_guess ("./"): The path which contains the other guess words
         - seed (time.time()): If you want to use a seed, i.e., fix the choosen word using a fixed seed.
+        - force_choice (""): If empty string then ignore, else the choice word will be as passed, useful for testing
 
     Useage:
         - Use the "play_interactive" method to have a cli user experience
@@ -22,8 +23,8 @@ class Wordle:
     """
 
     def __init__(
-        self, path_ans: str = "nyt-wordle-answers-alphabetical.txt", path_guess="nyt-wordle-allowed-guesses.txt",
-        seed: int = time.time()
+        self, path_ans: str = "nyt-wordle-answers-alphabetical.txt", path_guess: str = "nyt-wordle-allowed-guesses.txt",
+        seed: int = time.time(), force_choice: str = ""
     ):
         """
         Init
@@ -31,7 +32,10 @@ class Wordle:
         with open(path_ans) as fh:
             random.seed = seed
             self.word_list = [line.strip() for line in fh.readlines()]
-            self.choosen_word = random.choice(self.word_list)
+            if force_choice == "":
+                self.choosen_word = random.choice(self.word_list)
+            else: # for testing
+                self.choosen_word = force_choice
             self.attempts = (None, None, None, None, None, None)  # as a game allows 6 attempts
 
         with open(path_guess) as fh:  # as it is just used to check the consistency of inputs, can just append to ans
@@ -275,9 +279,54 @@ class Wordle:
                     - 1: You won
                     - 2: You lost
                     - -1: Input invalid
+                    - -2: Attempts filled, but not lost
+                    - -3: Repeat input
                 - A dict that contains both the index match chars along with only the match chars
                     - For example {"ind_match":[1], "belong_match": [3, 4]}
                     - At index 1 char from both string match, while at index 2 and 4 the char in input belong to choosen
                     - the ind are 0 - 4, just to make life easier if there is any repeating char that matches
+                    - {} if the first is not = 0
         """
-        pass
+
+        # as it is filled, better to return something than reset it by itself
+        if self.__get_attempts()[-1] is not None:
+            return [-2, {}]
+
+        validity_score = self.__check_input_validity(inp)
+        if validity_score != 0:
+            return [-1, {}]
+
+        if self.__check_word_match(inp):
+            self.__update_game_attempts(inp)
+            return [1, {}]
+        else:
+            match_status = self.__check_letter_match_inp(inp)
+
+            end_code = self.__update_game_attempts(inp)
+            if end_code == -1:
+                return [-3, {}]
+
+        if None not in self.__get_attempts():
+            return [2, {}]
+
+        return [0, match_status]
+
+
+# test the machine thing because why not
+if __name__ == "__main__":
+    wordle_instance = Wordle(force_choice="crank")
+    print(wordle_instance.play_machine("11111"))  # [-1, {}]
+    print(wordle_instance.play_machine("dskljf"))  # [-1, {}]
+    print(wordle_instance.play_machine("dsklj"))  # [-1, {}]
+    print(wordle_instance.play_machine("boxer"))  # [0, {'ind_match': [], 'belong_match': [4]}]
+    print(wordle_instance.play_machine("boxer"))  # [-3, {}]
+    print(wordle_instance.play_machine("death"))  # [0, {'ind_match': [2], 'belong_match': []}]
+    print(wordle_instance.play_machine("click"))  # [0, {'ind_match': [0, 4], 'belong_match': [3]}]
+    print(wordle_instance.play_machine("glass"))  # [0, {'ind_match': [2], 'belong_match': []}]
+    print(wordle_instance.play_machine("cases"))  # [0, {'ind_match': [0], 'belong_match': [1]}]
+    print(wordle_instance.play_machine("bolts"))  # [2, {}]
+    print(wordle_instance.play_machine("books"))  # [-2, {}]
+
+    print("\n")
+    wordle_instance = Wordle(force_choice="crank")
+    print(wordle_instance.play_machine("crank"))  # [1, {}]
