@@ -34,7 +34,7 @@ class Wordle:
             self.word_list = [line.strip() for line in fh.readlines()]
             if force_choice == "":
                 self.choosen_word = random.choice(self.word_list)
-            else: # for testing
+            else:  # for testing
                 self.choosen_word = force_choice
             self.attempts = (None, None, None, None, None, None)  # as a game allows 6 attempts
 
