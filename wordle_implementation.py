@@ -167,7 +167,7 @@ class Wordle:
             - inp: The input string
             - exact_match_inds: The list of indexes where exact match occur
             - belong_match_inds: The list of indexes where the belong matches occur
-        
+
         Returns:
             - formated ascii string implementing it
 
@@ -229,7 +229,7 @@ class Wordle:
                     print("It doesn't use English Alphabets, try again!")
                 if validity_score_bin[2] == "1":
                     print("Wrong Length, try again!")
-                
+
                 print("\n\n")
                 continue
 
