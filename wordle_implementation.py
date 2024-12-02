@@ -285,7 +285,9 @@ class Wordle:
                     - For example {"ind_match":[1], "belong_match": [3, 4]}
                     - At index 1 char from both string match, while at index 2 and 4 the char in input belong to choosen
                     - the ind are 0 - 4, just to make life easier if there is any repeating char that matches
-                    - {} if the first is not = 0
+                    - {} if the first is an error
+                    - if lost {"<win_word>":<attempt_lst>} is the dict
+                    - if won {"<win_word>":<attempt_lst>} is the dict
         """
 
         # as it is filled, better to return something than reset it by itself
@@ -298,7 +300,7 @@ class Wordle:
 
         if self.__check_word_match(inp):
             self.__update_game_attempts(inp)
-            return [1, {}]
+            return [1, {self.__get_choosen_word: self.__get_attempts}]
         else:
             match_status = self.__check_letter_match_inp(inp)
 
@@ -307,7 +309,7 @@ class Wordle:
                 return [-3, {}]
 
         if None not in self.__get_attempts():
-            return [2, {}]
+            return [2, {self.__get_choosen_word: self.__get_attempts}]
 
         return [0, match_status]
 
